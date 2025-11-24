@@ -40,9 +40,8 @@ export default function SuccessPage() {
                 }
 
                 const tokens: AuthTokens = await res.json();
-
-                localStorage.setItem("accessToken", tokens.accessToken);
-                localStorage.setItem("refreshToken", tokens.refreshToken);
+                document.cookie = `accessToken=${tokens.accessToken}; Path=/; Secure; SameSite=Strict;`;
+                document.cookie = `refreshToken=${tokens.refreshToken}; Path=/; Secure; SameSite=Strict;`;
 
                 router.replace("/dashboard");
             } catch (err: any) {
