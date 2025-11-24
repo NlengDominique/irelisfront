@@ -3,21 +3,31 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+interface AuthTokens {
+    accessToken: string;
+    refreshToken: string;
+}
+
+interface ErrorResponse {
+    message: string;
+}
+
 export default function SuccessPage() {
     const router = useRouter();
     const params = useSearchParams();
     const code = params.get("code");
-
     const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         if (!code) {
             setError("Code manquant");
             return;
         }
+
         async function exchangeCode() {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/oauth2/exchange?email=&code=${code}`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/oauth2/exchange?code=${code}`,
                     {
                         method: "POST",
                         credentials: "include",
@@ -25,9 +35,15 @@ export default function SuccessPage() {
                 );
 
                 if (!res.ok) {
-                    const data = await res.json();
+                    const data: ErrorResponse = await res.json();
                     throw new Error(data.message || "Erreur lors de l'échange du code");
                 }
+
+                const tokens: AuthTokens = await res.json();
+
+                localStorage.setItem("accessToken", tokens.accessToken);
+                localStorage.setItem("refreshToken", tokens.refreshToken);
+
                 router.replace("/dashboard");
             } catch (err: any) {
                 console.error(err);
@@ -35,7 +51,6 @@ export default function SuccessPage() {
             }
         }
         exchangeCode();
-
     }, [code, router]);
 
     if (error) return <p className="text-red-500">{error}</p>;
