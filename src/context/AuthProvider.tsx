@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { saveAccessToken } from "@/lib/auth";
 

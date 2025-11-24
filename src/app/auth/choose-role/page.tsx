@@ -10,7 +10,18 @@ export default function ChooseRolePage() {
   const email = useSearchParams().get("email") ?? "";
   const router = useRouter();
 
-  const choose = (role: string) => {
+  const choose = async (role: string) => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/request`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ email, userType: role}),
+      });
+
+
+      if (!res.ok) {
+          const data = await res.json();
+          console.error("Erreur lors de la demande d'OTP :", data.message);
+      }
     router.push(`/auth/otp?email=${encodeURIComponent(email)}&role=${role}`);
   };
 

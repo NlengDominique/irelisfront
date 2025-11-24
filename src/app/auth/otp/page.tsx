@@ -10,8 +10,8 @@ import { useAuth } from "@/context/AuthProvider";
 
 export default function OtpPage() {
   const params = useSearchParams();
-  const email = params.get("email") ?? "";
-  const role = params.get("role") ?? "CANDIDATE";
+  const email = params.get("email")
+  const role = params.get("role")
 
   const router = useRouter();
 
@@ -19,34 +19,18 @@ export default function OtpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { verifyOtp, requestOtp } = useAuth();
-
-  const handleVerify = async () => {
-    if (!code) return;
-    setLoading(true);
-    setError(null);
-
-    try {
-      const ok = await verifyOtp(email, code);
-      if (!ok) {
-        setError("Code invalide ou expiré.");
-      }
-      // → verifyOtp redirige automatiquement vers "/" si succès
-    } catch (err: any) {
-      setError(err.message || "Une erreur est survenue.");
-    } finally {
-      setLoading(false);
+    async function verify(e) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/verify`, {
+            method: "POST",
+            body: JSON.stringify({email,code,role}),
+            headers: {"Content-Type": "application/json"},
+            credentials: "include"
+        })
+        const data = await res.json()
+        if(!res.ok) return setError(data.message || "Une erreur s'est produite")
+        router.push("/dashboard")
     }
-  };
 
-  const resend = async () => {
-    try {
-      const ok = await requestOtp(email, role);
-      if (!ok) alert("Échec de l’envoi du code.");
-    } catch (err: any) {
-      alert(err.message || "Erreur réseau");
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f9fafb]">
@@ -68,16 +52,16 @@ export default function OtpPage() {
             className="tracking-widest text-center"
           />
 
-          <Button className="w-full mt-4" onClick={handleVerify}>
+          <Button className="w-full mt-4" onClick={verify}>
             {loading ? "Connexion..." : "Vérifier et me connecter"}
           </Button>
 
-          <button
-            className="text-sm text-blue-600 mt-3 mx-auto block"
-            onClick={resend}
-          >
-            Renvoyer
-          </button>
+          {/*<button*/}
+          {/*  className="text-sm text-blue-600 mt-3 mx-auto block"*/}
+          {/*  onClick={resend}*/}
+          {/*>*/}
+          {/*  Renvoyer*/}
+          {/*</button>*/}
         </div>
       </main>
 

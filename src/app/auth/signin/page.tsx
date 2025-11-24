@@ -1,13 +1,10 @@
-// app/auth/signin/page.tsx
+
 "use client";
 
 import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { checkEmail, requestOtp } from "@/lib/api"
-import { Chrome as GoogleIcon } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
 import Image from "next/image";
 import { AuthHeader } from "@/components/auth/AuthHeader";
@@ -24,7 +21,6 @@ export default function SigninPage() {
   const returnTo = params.get("returnTo") || "/";
 
   const handleGoogle = () => {
-    // ton provider redirige vers le backend avec returnTo
     signInWithGoogle();
   };
 
@@ -59,6 +55,11 @@ export default function SigninPage() {
       const data = await res.json();
 
       if (data.exists && data.mode === "signin") {
+          await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/request`,{
+              method:"POST",
+              body:JSON.stringify({email}),
+              headers: {"Content-Type" : "application/json"}
+          })
         router.push(`/auth/otp?email=${encodeURIComponent(email)}`);
       } else {
         router.push(`/auth/choose-role?email=${encodeURIComponent(email)}`);

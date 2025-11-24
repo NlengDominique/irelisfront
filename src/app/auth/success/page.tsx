@@ -7,9 +7,8 @@ export default function SuccessPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirige vers la home (ou dashboard)
-    router.replace("/");
-  }, []);
+    router.replace("/dashboard");
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
