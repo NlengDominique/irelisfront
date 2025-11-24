@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { AuthFooter } from "@/components/auth/AuthFooter";
-import { useAuth } from "@/context/AuthProvider";
 
 export default function OtpPage() {
   const params = useSearchParams();
