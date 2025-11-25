@@ -41,8 +41,11 @@ export default function SuccessPage() {
 
                 const tokens: AuthTokens = await res.json();
                 console.log(tokens)
-                document.cookie = `accessToken=${tokens.accessToken}; Path=/; Secure; SameSite=Strict;`;
-                document.cookie = `refreshToken=${tokens.refreshToken}; Path=/; Secure; SameSite=Strict;`;
+                document.cookie = `accessToken=${tokens.accessToken}`;
+                document.cookie = `refreshToken=${tokens.refreshToken}`;
+                localStorage.setItem("accessToken", tokens.accessToken);
+                localStorage.setItem("refreshToken", tokens.refreshToken);
+
 
                 router.replace("/dashboard");
             } catch (err: any) {
