@@ -40,6 +40,7 @@ export default function SuccessPage() {
                 }
 
                 const tokens: AuthTokens = await res.json();
+                console.log(tokens)
                 document.cookie = `accessToken=${tokens.accessToken}; Path=/; Secure; SameSite=Strict;`;
                 document.cookie = `refreshToken=${tokens.refreshToken}; Path=/; Secure; SameSite=Strict;`;
 
