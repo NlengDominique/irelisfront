@@ -26,6 +26,8 @@ export default function SuccessPage() {
 
         async function exchangeCode() {
             try {
+                console.log("➡️ Exchange started with code:", code);
+
                 const res = await fetch(
                     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/otp/oauth2/exchange?code=${code}`,
                     {
@@ -34,25 +36,33 @@ export default function SuccessPage() {
                     }
                 );
 
+                console.log("⬅️ Response received, status:", res.status);
+
                 if (!res.ok) {
-                    const data: ErrorResponse = await res.json();
-                    throw new Error(data.message || "Erreur lors de l'échange du code");
+                    const errorText = await res.text();
+                    console.error("❌ Backend error response:", errorText);
+                    throw new Error(errorText || "Erreur lors de l'échange du code");
                 }
 
                 const tokens: AuthTokens = await res.json();
-                console.log(tokens)
+                console.log("✅ Tokens reçus :", tokens);
+
                 document.cookie = `accessToken=${tokens.accessToken}`;
                 document.cookie = `refreshToken=${tokens.refreshToken}`;
+
                 localStorage.setItem("accessToken", tokens.accessToken);
                 localStorage.setItem("refreshToken", tokens.refreshToken);
 
+                console.log("➡️ Redirection vers /dashboard...");
 
-                router.replace("/dashboard");
+                router.push("/dashboard");
+
             } catch (err: any) {
-                console.error(err);
+                console.error("🔥 Erreur finale :", err);
                 setError(err.message);
             }
         }
+
         exchangeCode();
     }, [code, router]);
 
